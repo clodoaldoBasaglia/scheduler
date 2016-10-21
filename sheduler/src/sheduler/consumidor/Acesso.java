@@ -1,4 +1,4 @@
-package consumidor;
+package sheduler.consumidor;
 public enum Acesso {
     READ("R"),
     WRITE("W"),

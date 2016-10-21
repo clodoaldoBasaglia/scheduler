@@ -1,4 +1,4 @@
-package consumidor;
+package sheduler.consumidor;
 
 import java.util.Scanner;
 

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package scheduler;
+package sheduler.consumidor;
 
+import sheduler.consumidor.ItemDadoLock;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;

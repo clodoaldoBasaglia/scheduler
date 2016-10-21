@@ -1,4 +1,4 @@
-package consumidor;
+package sheduler.consumidor;
 
 public class Produtor extends Thread {
 	private Thread t;
