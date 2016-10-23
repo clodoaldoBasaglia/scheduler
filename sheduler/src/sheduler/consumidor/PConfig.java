@@ -5,17 +5,18 @@
  */
 package sheduler.consumidor;
 
-import sheduler.consumidor.ItemDadoLock;
-import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -46,15 +47,13 @@ public final class PConfig {
 
     //Fim da area de Configuração
     String url = "jdbc:postgresql://" + pHost + ":" + pPort + "/" + pDb;
+    Connection conn;
 
     public Connection startConnection() {
         try {
 
             Class.forName("org.postgresql.Driver");
-            Connection conn;
-
             conn = DriverManager.getConnection(url, pUser, pPw);
-
             if (!conn.isClosed()) {
                 System.out.println("conexão realizada");
 
@@ -76,6 +75,22 @@ public final class PConfig {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void mostraResultSet(boolean flag) {
+
+        try {
+            while(flag){
+                Statement stm = conn.createStatement();
+                ResultSet pRs = stm.executeQuery("SELECT * FROM schedule LIMIT 1;");
+                while (pRs.next()) {
+                    System.out.println(pRs.toString());
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PConfig.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     public Integer stopConnection(Connection conn) {

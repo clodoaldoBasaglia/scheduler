@@ -17,9 +17,11 @@ public class Main {
                 pc.startConnection();
 		produtor.start();
 		System.out.println("Pressione Enter para encerrar a producao!");
+                pc.mostraResultSet(true);
 		if(scanner.hasNextLine()) {
 			System.out.println("Producao encerrada");
 			produtor.setFlag(false);
+                        pc.mostraResultSet(true);
 		}
                 
 		
