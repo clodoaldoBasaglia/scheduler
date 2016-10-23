@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -51,7 +52,7 @@ public final class PConfig {
 
     public Connection startConnection() {
         try {
-
+            ArrayList<Tupla> arrayTupla = new ArrayList<>();
             Class.forName("org.postgresql.Driver");
             conn = DriverManager.getConnection(url, pUser, pPw);
             if (!conn.isClosed()) {
@@ -72,7 +73,11 @@ public final class PConfig {
                     private void diferenciador(ResultSet pRs) {
                         try {
                             while (pRs.next()) {
-                                System.out.println(pRs.getArray("idoperacao"));
+                                pRs.getInt("idoperacao");
+                                pRs.getInt("indicetransacao");
+                                pRs.getString("operacao");
+                                pRs.getString("itemdado");
+                                pRs.getString(4);
                             }
                         } catch (SQLException ex) {
                             Logger.getLogger(PConfig.class.getName()).log(Level.SEVERE, null, ex);
