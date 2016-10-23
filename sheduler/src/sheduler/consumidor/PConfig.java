@@ -63,6 +63,14 @@ public final class PConfig {
                         try {
                             stm = conn.createStatement();
                             ResultSet pRs = stm.executeQuery("SELECT * FROM schedule;");
+                            diferenciador(pRs);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(PConfig.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+
+                    private void diferenciador(ResultSet pRs) {
+                        try {
                             while (pRs.next()) {
                                 System.out.println(pRs.getArray("idoperacao"));
                             }
@@ -94,8 +102,6 @@ public final class PConfig {
         }
         return null;
     }
-
-    
 
     public Integer stopConnection(Connection conn) {
         try {
