@@ -29,7 +29,7 @@ public final class PConfig {
     //Porta do Postgre
     private Integer pPort = 5432;
     //Banco de dados alvo
-    private String pDb = "jensen2";
+    private String pDb = "teste";
     //Usuário do Postgre
     private String pUser = "postgres";
     //Senha do Postgre
@@ -171,6 +171,7 @@ public final class PConfig {
             if (list.get(i).getItemDado().equals(sched.getItemDado())) {
                 return true;
             }
+            i++;
         }
         return false;
     }
@@ -181,6 +182,7 @@ public final class PConfig {
             if (list.get(i).getItemDado().equals(sched.getItemDado())) {
                 return i;
             }
+            i++;
         }
         return 0;
     }

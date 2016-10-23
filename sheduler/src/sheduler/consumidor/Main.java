@@ -13,13 +13,15 @@ public class Main {
 		System.out.println( "Criando transacoes e gravando no banco..." );
 		Produtor produtor 
                         = new Produtor(numeroItens, numeroTransacoes, numeroAcessos);
+		PConfig pc = new PConfig();
+                pc.startConnection();
 		produtor.start();
 		System.out.println("Pressione Enter para encerrar a producao!");
-		
 		if(scanner.hasNextLine()) {
 			System.out.println("Producao encerrada");
 			produtor.setFlag(false);
 		}
+                
 		
 	}
 
