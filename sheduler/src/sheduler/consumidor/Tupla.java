@@ -17,7 +17,7 @@ public class Tupla {
     int indicetransacao;
     String operacao;
     String itemdado;
-    Timestamp timeStamp;
+    String timeStamp;
 
     public Tupla() {
 
@@ -55,11 +55,11 @@ public class Tupla {
         this.itemdado = itemdado;
     }
 
-    public Timestamp getTimeStamp() {
+    public String getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(Timestamp timeStamp) {
+    public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -68,6 +68,4 @@ public class Tupla {
         return "Tupla{" + "idoperacao=" + idoperacao + ", indicetransacao=" + indicetransacao + ", operacao=" + operacao + ", itemdado=" + itemdado + ", timeStamp=" + timeStamp + '}';
     }
 
-    
-    
 }

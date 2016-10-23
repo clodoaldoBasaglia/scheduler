@@ -73,15 +73,22 @@ public final class PConfig {
                     private void diferenciador(ResultSet pRs) {
                         try {
                             while (pRs.next()) {
-                                pRs.getInt("idoperacao");
-                                pRs.getInt("indicetransacao");
-                                pRs.getString("operacao");
-                                pRs.getString("itemdado");
-                                pRs.getString(4);
+                                Tupla t = new Tupla();
+                                t.setIdoperacao(pRs.getInt("idoperacao"));
+                                t.setIndicetransacao(pRs.getInt("indicetransacao"));
+                                t.setOperacao(pRs.getString("operacao"));
+                                t.setItemdado(pRs.getString("itemdado"));
+                                t.setTimeStamp(pRs.getString(4));
+                                arrayTupla.add(t);
                             }
+                            classificadorDeOperacoes(arrayTupla);
                         } catch (SQLException ex) {
                             Logger.getLogger(PConfig.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                    }
+
+                    private void classificadorDeOperacoes(ArrayList<Tupla> arrayTupla) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
 
                 };
