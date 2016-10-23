@@ -56,6 +56,24 @@ public final class PConfig {
             conn = DriverManager.getConnection(url, pUser, pPw);
             if (!conn.isClosed()) {
                 System.out.println("conexão realizada");
+                Runnable codigoThread = new Runnable() {
+                    @Override
+                    public void run() {
+                        Statement stm;
+                        try {
+                            stm = conn.createStatement();
+                            ResultSet pRs = stm.executeQuery("SELECT * FROM schedule;");
+                            while (pRs.next()) {
+                                System.out.println(pRs.getArray("idoperacao"));
+                            }
+                        } catch (SQLException ex) {
+                            Logger.getLogger(PConfig.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+
+                };
+                Thread tLeitura = new Thread(codigoThread);
+                tLeitura.start();
 
                 /*Statement stm = conn.createStatement();
                 
@@ -77,21 +95,7 @@ public final class PConfig {
         return null;
     }
 
-    public void mostraResultSet(boolean flag) {
-
-        try {
-            while(flag){
-                Statement stm = conn.createStatement();
-                ResultSet pRs = stm.executeQuery("SELECT * FROM schedule LIMIT 1;");
-                while (pRs.next()) {
-                    System.out.println(pRs.toString());
-                }
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(PConfig.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
+    
 
     public Integer stopConnection(Connection conn) {
         try {

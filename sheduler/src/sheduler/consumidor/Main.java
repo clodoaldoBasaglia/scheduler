@@ -3,28 +3,27 @@ package sheduler.consumidor;
 import java.util.Scanner;
 
 public class Main {
-	private static int numeroItens = 3;
-	private static int numeroTransacoes = 4;
-	private static int numeroAcessos = 9;
-	private static Scanner scanner;
-	
-	public static void main(String[] args) {
-		scanner = new Scanner(System.in);
-		System.out.println( "Criando transacoes e gravando no banco..." );
-		Produtor produtor 
-                        = new Produtor(numeroItens, numeroTransacoes, numeroAcessos);
-		PConfig pc = new PConfig();
-                pc.startConnection();
-		produtor.start();
-		System.out.println("Pressione Enter para encerrar a producao!");
-                pc.mostraResultSet(true);
-		if(scanner.hasNextLine()) {
-			System.out.println("Producao encerrada");
-			produtor.setFlag(false);
-                        pc.mostraResultSet(true);
-		}
-                
-		
-	}
+
+    private static int numeroItens = 3;
+    private static int numeroTransacoes = 4;
+    private static int numeroAcessos = 9;
+    private static Scanner scanner;
+
+    public static void main(String[] args) {
+        scanner = new Scanner(System.in);
+        System.out.println("Criando transacoes e gravando no banco...");
+        Produtor produtor
+                = new Produtor(numeroItens, numeroTransacoes, numeroAcessos);
+        PConfig pc = new PConfig();
+        pc.startConnection();
+        produtor.start();
+        System.out.println("Pressione Enter para encerrar a producao!");
+
+        if (scanner.hasNextLine()) {
+            System.out.println("Producao encerrada");
+            produtor.setFlag(false);
+        }
+
+    }
 
 }
