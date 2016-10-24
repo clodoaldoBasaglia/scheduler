@@ -12,9 +12,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +47,13 @@ public final class PConfig {
     //Sql para deletar Tupla
     private String sqlDeleteRow = "DELETE FROM " + tableSchedule + " WHERE idoperacao = ?";
 
+    private ArrayList<Tupla> filaIniciada = new ArrayList<Tupla>();
+    private ArrayList<Tupla> deadLock = new ArrayList<Tupla>();
+    private ArrayList<Tupla> filaTransacoes = new ArrayList<Tupla>();
+    private ArrayList<Tupla> filaLeitura = new ArrayList<Tupla>();
+    private ArrayList<Tupla> filaEscrita = new ArrayList<Tupla>();
+    HashMap<Tupla, ArrayList<Tupla>> mapaTupla = new HashMap<Tupla, ArrayList<Tupla>>();
+
     //Fim da area de Configuração
     String url = "jdbc:postgresql://" + pHost + ":" + pPort + "/" + pDb;
     Connection conn;
@@ -57,38 +65,56 @@ public final class PConfig {
             conn = DriverManager.getConnection(url, pUser, pPw);
             if (!conn.isClosed()) {
                 System.out.println("conexão realizada");
-                Runnable codigoThread = new Runnable() {
+                Runnable codigoThread;
+                codigoThread = new Runnable() {
                     @Override
                     public void run() {
                         Statement stm;
                         try {
                             stm = conn.createStatement();
                             ResultSet pRs = stm.executeQuery("SELECT * FROM schedule;");
+//                            while(pRs.next()){
+//                                System.out.println(pRs.getArray(1));
+//                            }
                             diferenciador(pRs);
                         } catch (SQLException ex) {
                             Logger.getLogger(PConfig.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
 
-                    private void diferenciador(ResultSet pRs) {
-                        try {
-                            while (pRs.next()) {
-                                Tupla t = new Tupla();
-                                t.setIdoperacao(pRs.getInt("idoperacao"));
-                                t.setIndicetransacao(pRs.getInt("indicetransacao"));
-                                t.setOperacao(pRs.getString("operacao"));
-                                t.setItemdado(pRs.getString("itemdado"));
-                                t.setTimeStamp(pRs.getString(4));
-                                arrayTupla.add(t);
-                            }
-                            classificadorDeOperacoes(arrayTupla);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(PConfig.class.getName()).log(Level.SEVERE, null, ex);
+                    private void diferenciador(ResultSet pRs) throws SQLException {
+                        while (pRs.next()) {
+                            Tupla t = new Tupla();
+                            t.setIdoperacao(pRs.getInt(1));
+                            t.setIndicetransacao(pRs.getInt(2));
+                            t.setItemdado(pRs.getString(3));
+                            t.setOperacao(pRs.getString(4));
+                            t.setTimeStamp(pRs.getString(5));
+                            arrayTupla.add(t);
                         }
+                        classificadorDeOperacoes(arrayTupla);
+
                     }
 
                     private void classificadorDeOperacoes(ArrayList<Tupla> arrayTupla) {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        for (Tupla tupla : arrayTupla) {
+                            if (tupla.getOperacao() == "S") {
+                                filaIniciada.add(tupla);
+                            } else if (tupla.getOperacao() == "R") {
+                                filaLeitura.add(tupla);
+                            } else if (tupla.getOperacao() == "W") {
+                                filaEscrita.add(tupla);
+                            }
+                        }
+                        ArrayList<Tupla> aux = new ArrayList<>();
+                        for (Tupla tu : filaIniciada) {
+                            for (Tupla t : arrayTupla) {
+                                if (t.getIndicetransacao() == tu.getIndicetransacao()) {
+                                    aux.add(t);
+                                }
+                            }
+                            mapaTupla.put(tu, aux);
+                        }
                     }
 
                 };
