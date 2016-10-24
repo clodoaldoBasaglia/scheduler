@@ -11,7 +11,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,6 +56,7 @@ public final class PConfig {
     private ArrayList<Tupla> filaTransacoes = new ArrayList<Tupla>();
     private ArrayList<Tupla> filaLeitura = new ArrayList<Tupla>();
     private ArrayList<Tupla> filaEscrita = new ArrayList<Tupla>();
+    private ArrayList<Tupla> filaProcessar = new ArrayList<Tupla>();
     HashMap<Tupla, ArrayList<Tupla>> mapaTupla = new HashMap<Tupla, ArrayList<Tupla>>();
 
     //Fim da area de Configuração
@@ -94,11 +99,15 @@ public final class PConfig {
                             t.setTimeStamp(pRs.getString(5));
                             arrayTupla.add(t);
                         }
-                        classificadorDeOperacoes(arrayTupla);
+                        try {
+                            classificadorDeOperacoes(arrayTupla);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(PConfig.class.getName()).log(Level.SEVERE, null, ex);
+                        }
 
                     }
 
-                    private void classificadorDeOperacoes(ArrayList<Tupla> arrayTupla) {
+                    private void classificadorDeOperacoes(ArrayList<Tupla> arrayTupla) throws ParseException {
 
                         for (Tupla tupla : arrayTupla) {
                             System.out.println(tupla.getOperacao());
@@ -111,7 +120,6 @@ public final class PConfig {
                             }
                         }
                         ArrayList<Tupla> aux = new ArrayList<>();
-                        System.out.println("");
                         for (Tupla tu : filaIniciada) {
                             for (Tupla t : arrayTupla) {
                                 if (t.getIndicetransacao() == tu.getIndicetransacao()) {
@@ -120,6 +128,34 @@ public final class PConfig {
                             }
                             mapaTupla.put(tu, aux);
                         }
+                        SimpleDateFormat dateF = new SimpleDateFormat("yyyyMMdd_hhmmss");
+                        for (Map.Entry<Tupla, ArrayList<Tupla>> entry : mapaTupla.entrySet()) {
+                            Tupla key = entry.getKey();
+                            ArrayList<Tupla> value = entry.getValue();
+                            for (Tupla tu : value) {
+                                Date par = dateF.parse(tu.getTimeStamp());
+                                Timestamp aux1 = new java.sql.Timestamp(par.getTime());
+                                for (Tupla t : filaEscrita) {
+                                    par = dateF.parse(t.getTimeStamp());
+                                    Timestamp aux2 = new java.sql.Timestamp(par.getTime());
+                                    if (t.getIndicetransacao() != tu.getIndicetransacao()
+                                            || t.getOperacao() == tu.getOperacao()
+                                            || t.getItemdado() == tu.getItemdado()
+                                            || aux1.before(aux2)) {
+                                        deadLock.add(t);
+                                    } else if(tu.getOperacao().equalsIgnoreCase("E")) {
+                                        filaProcessar.add(tu);
+                                    }
+                                }
+                            }
+                        }
+                        salvaBD(deadLock,filaProcessar);
+                        
+                    }
+
+                    private void salvaBD(ArrayList<Tupla> deadLock, ArrayList<Tupla> filaProcessar) {
+                        //FALTA SÓ SALVAR ESSES, FILAPROCESSAR PRIMEIRO
+                        //DEPOIS DEADLOCK
                     }
 
                 };
