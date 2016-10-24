@@ -85,10 +85,12 @@ public final class PConfig {
                     private void diferenciador(ResultSet pRs) throws SQLException {
                         while (pRs.next()) {
                             Tupla t = new Tupla();
+//                            System.out.println(pRs.getInt(1) +" "+pRs.getInt(2)+ " "+ pRs.getString(3)+
+//                                    " "+pRs.getString(4)+ " "+pRs.getString(5));
                             t.setIdoperacao(pRs.getInt(1));
                             t.setIndicetransacao(pRs.getInt(2));
-                            t.setItemdado(pRs.getString(3));
-                            t.setOperacao(pRs.getString(4));
+                            t.setOperacao(pRs.getString(3));
+                            t.setItemdado(pRs.getString(4));
                             t.setTimeStamp(pRs.getString(5));
                             arrayTupla.add(t);
                         }
@@ -97,16 +99,19 @@ public final class PConfig {
                     }
 
                     private void classificadorDeOperacoes(ArrayList<Tupla> arrayTupla) {
+
                         for (Tupla tupla : arrayTupla) {
-                            if (tupla.getOperacao() == "S") {
+                            System.out.println(tupla.getOperacao());
+                            if (tupla.getOperacao().equalsIgnoreCase("S")) {
                                 filaIniciada.add(tupla);
-                            } else if (tupla.getOperacao() == "R") {
+                            } else if (tupla.getOperacao().equalsIgnoreCase("R")) {
                                 filaLeitura.add(tupla);
-                            } else if (tupla.getOperacao() == "W") {
+                            } else if (tupla.getOperacao().equalsIgnoreCase("W")) {
                                 filaEscrita.add(tupla);
                             }
                         }
                         ArrayList<Tupla> aux = new ArrayList<>();
+                        System.out.println("");
                         for (Tupla tu : filaIniciada) {
                             for (Tupla t : arrayTupla) {
                                 if (t.getIndicetransacao() == tu.getIndicetransacao()) {
@@ -119,6 +124,7 @@ public final class PConfig {
 
                 };
                 Thread tLeitura = new Thread(codigoThread);
+                tLeitura.setName("fucking cunt");
                 tLeitura.start();
 
                 /*Statement stm = conn.createStatement();
